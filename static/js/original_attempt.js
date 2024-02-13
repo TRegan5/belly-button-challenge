@@ -1,44 +1,37 @@
 const url = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json';
 
 let names = [];
-let metadata = [];
 let samples = [];
+let metadata = [];
 
 // Fetch JSON data and console log it
-d3.json(url).then((data) => {
-    console.log(data);
-    names = data.names;
-    console.log(names);
-    metadata = data.metadata;
-    console.log(metadata);
-    samples = data.samples;
-    console.log(samples);
+d3.json(url).then(function(data) {
+  console.log(data);
+  names = Object.values(data.names);
+  samples = Object.values(data.samples);
+  metadata = Object.values(data.metadata);
 });
 
-
 // Select Test Subject ID No select id element
-let dropdown = d3.select('#selDataset');
+let SubjectID = d3.select('#selDataset');
 names.forEach(name => {
-    dropdown
+    SubjectID
         .append('option').text(name)
         .property('value', name)
 });
 
-let id = names[0];
-//let sIndex = names.indexOf(subject);
+subject = names[0];
+let sIndex = names.indexOf(subject);
 
 function init() {
-    
-    // Select Test Subject ID No select id element
-    //let dropdown = d3.select('#selDataset');
-    //bbData.names.forEach(name => {
-        //    dropdown
-        //        .append('option').text(name)
-        //        .property('value', name)
-        //});
-
-    
-    
+    let subjVals = {};
+    for (i = 0; i < samples[sIndex].sample_values.length; i++) {
+        subjVals.push({
+            'values' : samples[sIndex].sample_values[i],
+            'ids' : samples[sIndex].out_ids[i],
+            'labels' : samples[sIndex].out_labels[i]
+        });
+    };
     bar_data = [{
         //x : le_values,
         //y : samples[sIndex].,
@@ -50,18 +43,7 @@ function init() {
         //labels : ,
         type : 'pie'
     }];
-    //Plotly.newPlot(data);
-};
-
-function topTenOTUs(id) {
-    let sample = samples[id];
-    let sVals = [];
-    for (i = 0; i < sample.length; i++) {
-        sVals.append({
-            'otu_ids' : sample.otu_ids,
-            'labels' : sample.otu_labels
-        })
-    };
+    Plotly.newPlot(data);
 };
 
 function updatePlotly() {
@@ -79,7 +61,7 @@ function updatePlotly() {
 };
 
 function top_10_OTUs(subj) {
-    //let top10 = samples.filter(samples.id == subj);
+    let top10 = samples.filter(samples.id == subj);
         
 };
 
