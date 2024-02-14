@@ -13,31 +13,25 @@ d3.json(url).then((data) => {
     console.log(metadata);
     samples = data.samples;
     console.log(samples);
+
+    // Select Test Subject ID No select id element
+    let dropdown = d3.select('#selDataset');
+    names.forEach(name => {
+        dropdown.append('option').text(name).property('value', name)
+    });
+
+    let id = names[0];
+    topTenOTUs(id);
+
 });
 
+console.log(data);
 
-// Select Test Subject ID No select id element
-let dropdown = d3.select('#selDataset');
-names.forEach(name => {
-    dropdown
-        .append('option').text(name)
-        .property('value', name)
-});
 
 let id = names[0];
 //let sIndex = names.indexOf(subject);
 
 function init() {
-    
-    // Select Test Subject ID No select id element
-    //let dropdown = d3.select('#selDataset');
-    //bbData.names.forEach(name => {
-        //    dropdown
-        //        .append('option').text(name)
-        //        .property('value', name)
-        //});
-
-    
     
     bar_data = [{
         //x : le_values,
@@ -58,10 +52,13 @@ function topTenOTUs(id) {
     let sVals = [];
     for (i = 0; i < sample.length; i++) {
         sVals.append({
+            'sample_values' : sample.sample_values,
             'otu_ids' : sample.otu_ids,
             'labels' : sample.otu_labels
         })
     };
+    sVals.sort((a, b) => b.sample_values - a.sample_values);
+    console.log(sVals);
 };
 
 function updatePlotly() {
