@@ -1,42 +1,10 @@
 const url = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json';
 
-let names = [];
+//let names = [];
 let metadata = [];
 let samples = [];
-let sample = [];
 let testSub = [];
 let sVals = [];
-
-// Fetch JSON data and console log it
-d3.json(url).then((data) => {
-    console.log(data);
-    names = data.names;
-    console.log(names);
-    metadata = data.metadata;
-    console.log(metadata);
-    samples = data.samples;
-    console.log(samples);
-
-    
-
-    testSub = (names[0]);
-    console.log(testSub);
-    sample = samples[testSub];
-    
-    //for (i = 0; i < 153; i++) {
-      //  sVals.append(//{
-            //'sample_values' : 
-        //    sample[[sample.id = testSub]].sample_values[i],
-            //'otu_ids' : 
-          //  sample[sample.id = testSub].otu_ids[i],
-            //'labels' : 
-            //sample[sample.id = testSub].otu_labels[i]
-        //}
-        //)
-    //}
-});
-
-
 
 //let id = names[0];
 //let sIndex = names.indexOf(subject);
@@ -46,32 +14,78 @@ function init() {
     d3.json(url).then((data) => {
         names = data.names;
         console.log(names);
-    
         // Select Test Subject ID No select id element
         let dropdown = d3.select('#selDataset');
         names.forEach(name => {
-            dropdown.append('option').text(name).property('value', name)
+            dropdown.append('option').text(name).property('value', name);
         });
+        //topTenOTUs(names[0]);
+        console.log(names[0]);
+        //bubbleChart(names[0]);
+        demoInfo(names[0]);
+
     });
 }
 
-function topTenOTUs(id) {
-    let sample = samples[0];
-    let sVals = [];
-    for (i = 0; i < sample.length; i++) {
-        sVals.append(//{
-            //'sample_values' : 
-            sample.sample_values,
-            //'otu_ids' : 
-            sample.otu_ids,
-            //'labels' : 
-            sample.otu_labels
-        //}
-        )
-    };    
-    console.log(sVals);
-    sVals.sort((a, b) => b.sample_values - a.sample_values);
-    console.log(sVals);
+function topTenOTUs(sIdNo) {
+    console.log(sIdNo);
+    let sample = [];
+    d3.json(url).then((data) => {
+        sample = data.samples;
+        console.log(sample);
+        let subject = sample.filter((subj) => subj.id == sIdNo)[0];
+        console.log(subject);
+        let sVals = subject.sample_values.slice(0, 10);
+        let sIDs = subject.otu_ids.slice(0, 10)
+        bar_data = [{
+            x : sVals,
+            y : sIDs,
+            type : 'bar',
+            orientation : 'h'
+        }];
+        Plotly.newPlot(bar_data);
+    });
+};
+
+function bubbleChart(sIdNo) {
+    console.log(sIdNo);
+    let sample = [];
+    let id = (sIdNo);
+    console.log(sIdNo);
+    console.log(id);
+    d3.json(url).then((data) => {
+        sample = data.samples;
+        console.log(id);
+        console.log(sample);
+        
+        //bubble_data = [{
+            //values : ,
+            //labels : ,
+          //  type : 'pie'
+        //}];
+        //Plotly.newPlot(data);
+        
+    });
+};
+
+function demoInfo(sIdNo) {
+    let demoWindow = d3.select('#sample-metadata');
+
+    //console.log(sIdNo);
+    //console.log(id);
+    d3.json(url).then((data) => {
+        metadata = data.metadata;
+        console.log(metadata);
+        let subject = metadata.filter((subj) => subj.id == sIdNo)[0];
+        let demo_text = `id: ${subject.id}<br>
+        ethnicity: ${subject.ethnicity}<br>
+        gender: ${subject.gender}<br>
+        age: ${subject.age}<br>
+        location: ${subject.location}<br>
+        bbtype: ${subject.bbtype}<br>
+        wfreq: ${subject.wfreq}`;
+        demoWindow.text(demo_text);
+    });
 };
 
 function updatePlotly() {
@@ -86,11 +100,6 @@ function updatePlotly() {
     
     // Note the extra brackets around 'x' and 'y'
     //Plotly.restyle("pie", "values", [values]);
-};
-
-function top_10_OTUs(subj) {
-    //let top10 = samples.filter(samples.id == subj);
-        
 };
 
 init();
