@@ -19,9 +19,9 @@ function init() {
         names.forEach(name => {
             dropdown.append('option').text(name).property('value', name);
         });
-        //topTenOTUs(names[0]);
+        topTenOTUs(names[0]);
         console.log(names[0]);
-        //bubbleChart(names[0]);
+        bubbleChart(names[0]);
         demoInfo(names[0]);
 
     });
@@ -36,34 +36,40 @@ function topTenOTUs(sIdNo) {
         let subject = sample.filter((subj) => subj.id == sIdNo)[0];
         console.log(subject);
         let sVals = subject.sample_values.slice(0, 10);
-        let sIDs = subject.otu_ids.slice(0, 10)
+        let sIDs = subject.otu_ids.slice(0, 10);
+        let s_labels = subject.otu_labels.slice(0, 10);
         bar_data = [{
             x : sVals,
             y : sIDs,
-            type : 'bar',
+            text : s_labels,
             orientation : 'h'
         }];
-        Plotly.newPlot(bar_data);
+        Plotly.newPlot('bar', bar_data);
     });
 };
 
 function bubbleChart(sIdNo) {
     console.log(sIdNo);
     let sample = [];
-    let id = (sIdNo);
-    console.log(sIdNo);
-    console.log(id);
     d3.json(url).then((data) => {
         sample = data.samples;
-        console.log(id);
         console.log(sample);
-        
-        //bubble_data = [{
-            //values : ,
-            //labels : ,
-          //  type : 'pie'
-        //}];
-        //Plotly.newPlot(data);
+        let subject = sample.filter((subj) => subj.id == sIdNo)[0];
+        let sIDs = subject.otu_ids.slice(0, 10);
+        let sVals = subject.sample_values.slice(0, 10);
+        let s_labels = subject.otu_labels.slice(0, 10);
+
+        bubble_data = [{
+            x : sIDs,
+            y : sVals,
+            mode : 'markers',
+            marker : {
+                size : sVals,
+                color : sIDs
+            },
+            text : s_labels
+        }];
+        Plotly.newPlot('bubble', bubble_data);
         
     });
 };
@@ -84,7 +90,7 @@ function demoInfo(sIdNo) {
         location: ${subject.location}<br>
         bbtype: ${subject.bbtype}<br>
         wfreq: ${subject.wfreq}`;
-        demoWindow.text(demo_text);
+        demoWindow.html(demo_text);
     });
 };
 
