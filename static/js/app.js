@@ -2,15 +2,11 @@ const url = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/
 
 //let names = [];
 let metadata = [];
-let samples = [];
-let testSub = [];
+let sample = [];
 let sVals = [];
 
-//let id = names[0];
-//let sIndex = names.indexOf(subject);
 
 function init() {
-    
     d3.json(url).then((data) => {
         names = data.names;
         console.log(names);
@@ -23,26 +19,29 @@ function init() {
         console.log(names[0]);
         bubbleChart(names[0]);
         demoInfo(names[0]);
-
+        console.log(`Names: ${names}`);
+        dropdown.on('change', updatePlotly);
     });
 }
 
 function topTenOTUs(sIdNo) {
     console.log(sIdNo);
-    let sample = [];
     d3.json(url).then((data) => {
         sample = data.samples;
         console.log(sample);
         let subject = sample.filter((subj) => subj.id == sIdNo)[0];
         console.log(subject);
         let sVals = subject.sample_values.slice(0, 10).reverse();
+        console.log(`sVals: ${sVals}`);
         let sIDs = subject.otu_ids.slice(0, 10).reverse();
-        let s_labels = subject.otu_labels.slice(0, 10).reverse();
-        s_labels = s_labels.map(label => 'OTU' + label);
+        console.log(`sIDs: ${sIDs}`);
+        let sLabels = subject.otu_labels.slice(0, 10).reverse();
+        console.log(`sLabels: ${sVals}`);
+        sLabels = sLabels;
         bar_data = [{
             x : sVals,
-            y : sIDs,
-            text : s_labels,
+            y : sIDs.map(id => 'OTU' + id),
+            text : sLabels,
             type : 'bar',
             orientation : 'h'
         }];
@@ -52,14 +51,13 @@ function topTenOTUs(sIdNo) {
 
 function bubbleChart(sIdNo) {
     console.log(sIdNo);
-    let sample = [];
     d3.json(url).then((data) => {
         sample = data.samples;
         console.log(sample);
         let subject = sample.filter((subj) => subj.id == sIdNo)[0];
-        let sIDs = subject.otu_ids;//.slice(0, 10);
-        let sVals = subject.sample_values;//.slice(0, 10);
-        let s_labels = subject.otu_labels;//.slice(0, 10);
+        let sIDs = subject.otu_ids;
+        let sVals = subject.sample_values;
+        let s_labels = subject.otu_labels;
         bubble_data = [{
             x : sIDs,
             y : sVals,
@@ -72,15 +70,11 @@ function bubbleChart(sIdNo) {
             text : s_labels
         }];
         Plotly.newPlot('bubble', bubble_data);
-        
     });
 };
 
 function demoInfo(sIdNo) {
     let demoWindow = d3.select('#sample-metadata');
-
-    //console.log(sIdNo);
-    //console.log(id);
     d3.json(url).then((data) => {
         metadata = data.metadata;
         console.log(metadata);
@@ -100,14 +94,12 @@ function updatePlotly() {
     // Use D3 to select the dropdown menu
     let dropdownMenu = d3.select('#selDataset');
     // Assign the value of the dropdown menu option to a variable
-    let dataset = dropdownMenu.property('value');
-  
-    // Initialize x and y arrays
-    let values = [];
-  
-    
-    // Note the extra brackets around 'x' and 'y'
-    //Plotly.restyle("pie", "values", [values]);
+    let subject = dropdownMenu.property('value');
+    // Update data displays with new selection from dropdown
+    topTenOTUs(subject);
+    console.log(subject);
+    bubbleChart(subject);
+    demoInfo(subject);
 };
 
 init();
