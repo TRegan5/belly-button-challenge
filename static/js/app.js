@@ -35,13 +35,15 @@ function topTenOTUs(sIdNo) {
         console.log(sample);
         let subject = sample.filter((subj) => subj.id == sIdNo)[0];
         console.log(subject);
-        let sVals = subject.sample_values.slice(0, 10);
-        let sIDs = subject.otu_ids.slice(0, 10);
-        let s_labels = subject.otu_labels.slice(0, 10);
+        let sVals = subject.sample_values.slice(0, 10).reverse();
+        let sIDs = subject.otu_ids.slice(0, 10).reverse();
+        let s_labels = subject.otu_labels.slice(0, 10).reverse();
+        s_labels = s_labels.map(label => 'OTU' + label);
         bar_data = [{
             x : sVals,
             y : sIDs,
             text : s_labels,
+            type : 'bar',
             orientation : 'h'
         }];
         Plotly.newPlot('bar', bar_data);
@@ -55,17 +57,17 @@ function bubbleChart(sIdNo) {
         sample = data.samples;
         console.log(sample);
         let subject = sample.filter((subj) => subj.id == sIdNo)[0];
-        let sIDs = subject.otu_ids.slice(0, 10);
-        let sVals = subject.sample_values.slice(0, 10);
-        let s_labels = subject.otu_labels.slice(0, 10);
-
+        let sIDs = subject.otu_ids;//.slice(0, 10);
+        let sVals = subject.sample_values;//.slice(0, 10);
+        let s_labels = subject.otu_labels;//.slice(0, 10);
         bubble_data = [{
             x : sIDs,
             y : sVals,
             mode : 'markers',
             marker : {
                 size : sVals,
-                color : sIDs
+                color : sIDs,
+                colorscale : 'Earth'
             },
             text : s_labels
         }];
